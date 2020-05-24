@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "dev:debug": "nodemon --inspect src/index.js",
-    "start": "node src/index.js"
+    "start": "nodemon src/index.js"
   },
   "dependencies": {
     "@sendgrid/mail": "^6.4.0",
