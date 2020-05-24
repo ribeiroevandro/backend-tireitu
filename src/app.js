@@ -14,7 +14,6 @@ class App {
   }
 
   routes() {
-    // cors para tireitu
     this.server.use(cors());
     this.server.use(routes);
   }
