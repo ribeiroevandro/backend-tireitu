@@ -6,47 +6,51 @@ var _arquivos = require('../models/arquivos'); var _arquivos2 = _interopRequireD
 
 class SessaoController {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      email: Yup.string()
-        .email()
-        .required(),
-      senha: Yup.string().required(),
-    });
-    if (!(await schema.isValid(req.body))) {
-      return res.status(401).json({ erro: 'Dados inválidos!' });
+    try {
+      const schema = Yup.object().shape({
+        email: Yup.string()
+          .email()
+          .required(),
+        senha: Yup.string().required(),
+      });
+      if (!(await schema.isValid(req.body))) {
+        return res.status(401).json({ erro: 'Dados inválidos!' });
+      }
+      const { email, senha } = req.body;
+
+      const usuario = await _usuarios2.default.findOne({
+        where: { email },
+        include: [
+          {
+            model: _arquivos2.default,
+            as: 'avatar',
+            attributes: ['id', 'arquivo', 'url'],
+          },
+        ],
+      });
+
+      if (!usuario) {
+        return res.status(401).json({ erro: 'E-mail inválido!' });
+      }
+      if (!(await usuario.checkPassword(senha))) {
+        return res.status(401).json({ erro: 'Senha inválida!' });
+      }
+
+      const { id, nome, avatar } = usuario;
+
+      return res.json({
+        mensagem: 'Sessão Criada',
+        id,
+        nome,
+        email,
+        avatar,
+        token: _jsonwebtoken2.default.sign({ id }, _auth2.default.secret, {
+          expiresIn: _auth2.default.expiresIn,
+        }),
+      });
+    } catch (error) {
+      return console.log('error ao tentar criar sessão', error);
     }
-    const { email, senha } = req.body;
-
-    const usuario = await _usuarios2.default.findOne({
-      where: { email },
-      include: [
-        {
-          model: _arquivos2.default,
-          as: 'avatar',
-          attributes: ['id', 'arquivo', 'url'],
-        },
-      ],
-    });
-
-    if (!usuario) {
-      return res.status(401).json({ erro: 'E-mail inválido!' });
-    }
-    if (!(await usuario.checkPassword(senha))) {
-      return res.status(401).json({ erro: 'Senha inválida!' });
-    }
-
-    const { id, nome, avatar } = usuario;
-
-    return res.json({
-      mensagem: 'Sessão Criada',
-      id,
-      nome,
-      email,
-      avatar,
-      token: _jsonwebtoken2.default.sign({ id }, _auth2.default.secret, {
-        expiresIn: _auth2.default.expiresIn,
-      }),
-    });
   }
 }
 
