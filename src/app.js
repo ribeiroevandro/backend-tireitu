@@ -14,7 +14,7 @@ class App {
   }
 
   routes() {
-    this.server.use(cors({ origin: 'https://app-tireitu.herokuapp.com/' }));
+    this.server.use(cors({ origin: 'https://app-tireitu.herokuapp.com' }));
     this.server.use(routes);
   }
 
