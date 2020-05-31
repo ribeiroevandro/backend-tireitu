@@ -49,7 +49,7 @@ class SessaoController {
         }),
       });
     } catch (error) {
-      console.log('error ao tentar criar sessão', error);
+      return console.log('error ao tentar criar sessão', error);
     }
   }
 }
